@@ -40,8 +40,8 @@ TOKENIDMAPPING = TALES_DICT.token2id
 
 #create query vector
 
-LSI = models.LsiModel(CORPUS_TFIDF, id2word=TALES_DICT, num_topics=1)
-CORPUS_LSI = LSI[CORPUS_TFIDF]
+LSI = models.LsiModel(CORPUS_TFIDF, id2word=TALES_DICT, num_topics=4)
+CORPUS_LSI = LSI[CORPUS]#CORPUS_TFIDF
 INDEX = similarities.MatrixSimilarity(CORPUS_LSI)
 
 QUERY = "Frosch"
