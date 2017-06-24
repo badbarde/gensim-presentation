@@ -4,63 +4,57 @@
 Created on Mon Apr 10 20:47:31 2017
 """
 import logging
-import glob
-import re
-import json
+import os
+import json as js
 from gensim import corpora
 from gensim import models
+from gensim import similarities
+import loadtexts as lt
 
-logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
+logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s',
+                    level=logging.INFO)
 
+if os.path.exists("tales.dict"):
+    TALES_DICT = corpora.Dictionary.load("tales.dict")
+if os.path.exists("tales_serial.corp"):
+    CORPUS = corpora.MmCorpus("tales_serial.corp")
+if os.path.exists("tales.mapping"):
+    with open("tales.mapping", "r") as fp:
+        MAPPING = js.load(fp)
+else:
+    WORDS, MAPPING = lt.index_files()
+    with open("tales.mapping", "w") as fp:
+        js.dump(MAPPING, fp)
+    TALES_DICT = corpora.Dictionary(WORDS)
 
-def get_stopwords():
-    """read in stoplistfile and return list of stopwords
-    """
-    #remove stopwords
-    stoplist = []
-    with open("stopwords.de.json") as stopdoc:
-        stoplist = json.load(stopdoc)
-    return stoplist
+    TALES_DICT.save("tales.dict")
+    CORPUS = [TALES_DICT.doc2bow(text) for text in WORDS]
+    corpora.MmCorpus.serialize("tales_serial.corp", CORPUS)
 
-def index_files():
-    """indexes a corpus of files and returns a bag of words as a list
-    """
-    files = glob.glob("CorpusUTF8/**" + ".txt", recursive=True)
-    documents = []
-    for file in files:
-        with open(file, encoding="utf-8", mode="r") as doc:
-            documents.append(doc.readlines())
+TFIDF = models.TfidfModel(CORPUS)
+CORPUS_TFIDF = TFIDF[CORPUS]
+TFIDF.save("tfidf")
 
-    ignorechars = re.compile("[:.,;:!?\"-()]")
-
-
-    texts = []
-    stopcnt = 0
-    for doc in documents:
-        doctext = []
-        for line in doc:
-            line = ignorechars.sub('', line)
-            for word in line.split():
-                if word.lower() not in get_stopwords():
-                    doctext.append(word.lower())
-                else:
-                    stopcnt += 1
-        texts.append(doctext)
-    logging.info("stopwords removed: " + str(stopcnt))
-    return texts
-
-dictionary = corpora.Dictionary(index_files())
-tfidf = models.TfidfModel(dictionary)
 #get a mapping form tokens to ids
-tokenidmapping = dictionary.token2id
+TOKENIDMAPPING = TALES_DICT.token2id
+
 #create query vector
-query = dictionary.doc2bow("Hexe Frosch".lower().split())
-print(tfidf[query])
 
+LSI = models.LsiModel(CORPUS_TFIDF, id2word=TALES_DICT, num_topics=1)
+CORPUS_LSI = LSI[CORPUS_TFIDF]
+INDEX = similarities.MatrixSimilarity(CORPUS_LSI)
+
+QUERY = "Hexe Frosch"
+VEC_QUERY = TALES_DICT.doc2bow(QUERY.lower().split())
+VEC_LSI = LSI[VEC_QUERY]
+RESULT = INDEX[VEC_LSI]
+SORTED_RESULT = sorted(enumerate(RESULT), key=lambda item: -item[1])
+print(SORTED_RESULT)
+logging.info("Results for " + QUERY)
+for res in SORTED_RESULT:
+    print(MAPPING[res[0]])
 #tfidfi_dict = tfidf[dictionary]
-tfidf.save("tfidf")
 
-print(len(index_files()))
 #texts = [[[word for word in line.split() if word not in stoplist]
 #          for line in document]
 #         for document in documents]
