@@ -44,15 +44,25 @@ LSI = models.LsiModel(CORPUS_TFIDF, id2word=TALES_DICT, num_topics=1)
 CORPUS_LSI = LSI[CORPUS_TFIDF]
 INDEX = similarities.MatrixSimilarity(CORPUS_LSI)
 
-QUERY = "Hexe Frosch"
+QUERY = "Frosch"
 VEC_QUERY = TALES_DICT.doc2bow(QUERY.lower().split())
 VEC_LSI = LSI[VEC_QUERY]
 RESULT = INDEX[VEC_LSI]
-SORTED_RESULT = sorted(enumerate(RESULT), key=lambda item: -item[1])
-print(SORTED_RESULT)
-logging.info("Results for " + QUERY)
+logging.info("result")
+for res in RESULT:
+    print(res)
+SORTED_RESULT = sorted(enumerate(RESULT), key=lambda item: item[1], reverse=True)
+logging.info("sorted")
 for res in SORTED_RESULT:
-    print(MAPPING[res[0]])
+    print(res)
+
+
+logging.info("Results for " + QUERY)
+logging.info(MAPPING)
+logging.info(SORTED_RESULT)
+
+for res in SORTED_RESULT:
+    print(MAPPING.get((str(res[0])), "doc not found"))
 #tfidfi_dict = tfidf[dictionary]
 
 #texts = [[[word for word in line.split() if word not in stoplist]

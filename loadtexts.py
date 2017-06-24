@@ -23,6 +23,7 @@ def index_files():
     files = glob.glob("CorpusUTF8/**" + ".txt", recursive=True)
     documents = []
     filemapping = dict(enumerate(files))
+    logging.info(filemapping)
     for file in filemapping.values():
         with open(file, encoding="utf-8", mode="r") as doc:
             documents.append(doc.readlines())
