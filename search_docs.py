@@ -27,7 +27,7 @@ def index_files(corpus_path):
             documents.append(ignorechars.sub('', doc.read()))
 
     with open("stopwords.de.json") as stop_js:
-        stopwords = js.load(stop_js)
+        stopwords = set(js.load(stop_js))#important !1!!! SET
 
     bags_of_words = [[word for word in doc.lower().split()
                       if word not in stopwords] for doc in documents]
