@@ -8,6 +8,7 @@ import sys
 import os
 import glob
 import re
+import argparse
 from functools import partial
 import json
 from gensim import corpora
@@ -25,12 +26,6 @@ def save_all_corpi(corpus, path="resources/mycorpus"):
     corpora.SvmLightCorpus.serialize(path +".svmlight", corpus)
     corpora.LowCorpus.serialize(path +".low", corpus)
 
-def save_all_dicts(dictionary, path="resources/mydict"):
-    """save dict in many formats
-    """
-    corpora.dictionary.save(dictionary, path + ".dict")
-    corpora.hashdictionary.save(dictionary, path + ".dict")
-
 def get_file_map(corpus_path):
     """creates a dictionary that assigns a numerical value to a document
     """
@@ -39,10 +34,13 @@ def get_file_map(corpus_path):
 def get_texts(doc_map):
     """returns a list of texts where each text is a document from doc_map
     """
-    ignorechars = re.compile("[:.,;:!?\"-()]\n")
+    ignorechars = """[:.,;!?"-()]_\\/»«<>$%&@€=+*~"#´`{}|\r\n\t“”‐"""
     for file in doc_map.values():
         with open(file, encoding="utf-8", mode="r") as doc:
-            yield ignorechars.sub('', doc.read())
+            mydoc = doc.read()
+            for char in ignorechars:
+                mydoc = mydoc.replace(char, "")
+        yield mydoc
 
 def get_stopwords(stop_word_file):
     """returns a set of stopwords from the given path
@@ -65,13 +63,14 @@ def index_files(corpus_path):
 def search_docs(corpus_path, query, num_results=10, model=models.TfidfModel):
     """searches the corpus for words from the query
     """
-    logging.info("looking for " + query + " in " + corpus_path)
+    logging.info("looking for " + ", ".join(query) + " in " + corpus_path)
     words, mapping = index_files(corpus_path)
 
     tales_dict = corpora.Dictionary(words)
     corpus = [tales_dict.doc2bow(text) for text in words]
 
-    save_all_dicts(tales_dict)
+    tales_dict.save("resources/my_dict.dict")
+    tales_dict.save_as_text("resources/my_text_dict.dict")
     save_all_corpi(corpus)
 
     with open("resources/mycorpus.json", mode="w", encoding="utf-8") as file_stream:
@@ -82,26 +81,53 @@ def search_docs(corpus_path, query, num_results=10, model=models.TfidfModel):
     my_model = model(corpus)
     index = similarities.MatrixSimilarity(my_model[corpus])
 
-    vec_query = my_model[tales_dict.doc2bow(query.lower().split())]
+    vec_query = my_model[tales_dict.doc2bow([q.lower() for q in query])]
     sorted_result = sorted(enumerate(index[vec_query]), key=lambda i: -i[1])
     retval = [mapping.get(i[0]) for i in sorted_result]
     logging.info("returning " + str(num_results))
     return retval[:num_results]
 
-if __name__ == "__main__":
-    my_search = partial(search_docs, sys.argv[1])
-    my_search = partial(my_search, sys.argv[2])
-    my_search = partial(my_search, 10)
+def handle_args(argv):
+    """parse given arguments
+    """
+    parser = argparse.ArgumentParser(description="Seach based on semantica \
+                                      similarity trough a directory with textfiles")
+    parser.add_argument("corpus", metavar="PATH", type=str,# nargs='+',
+                        help="must be a path to a diectory with the documents\
+                         that are supposed to be searched through")
+    parser.add_argument("query", metavar="QUERY", type=str, nargs='+',
+                        help="combination of words that you want to sind similar\
+                         documents to")
+    parser.add_argument("-n", "--nresults", dest="num_results", type=int,
+                        help="specify max number of search results")
+    parser.add_argument("-m", "--model", dest="model", default="tfidf",
+                        help="optionally define model for representing the corpus")
 
-    if sys.argv[3].lower() == "tfidf" or sys.argv[3].lower() == None:
-        search_results = my_search(models.TfidfModel)
-    elif sys.argv[3].lower() == "lsi":
-        search_results = my_search(models.LsiModel)
-    elif sys.argv[3].lower() == "lda":
-        search_results = my_search(models.LdaModel)
+    parser.add_argument("-q", "--quiet", dest="quiet", action="store_const",
+                        const=True, help="supress messages (besides results)")
+    parser.add_argument("-d", "--debug", dest="debug", action="store_const",
+                        const=True, help="enable debug messages")
+
+    args = parser.parse_args(argv)
+
+    if args.quiet:
+        logging.getLogger().setLevel(logging.ERROR)
+    elif args.debug:
+        logging.getLogger().setLevel(logging.DEBUG)
+
+    if args.model.lower() == "tfidf":
+        my_model = models.TfidfModel
+    elif args.model.lower() == "lsi":
+        my_model = models.LsiModel
+    elif args.model.lower() == "lda":
+        my_model = models.LdaModel
     else:
-        logging.info(sys.argv[3] + " unknown model")
+        logging.error(args + " unknown model")
         sys.exit()
 
-    for result in search_results:
-        print(result.replace(sys.argv[1] + "/", ""))
+    res = search_docs(args.corpus, args.query, args.num_results, my_model)
+    for r in res:
+        print(r)
+
+if __name__ == "__main__":
+    handle_args(sys.argv[1:])
