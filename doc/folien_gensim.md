@@ -17,7 +17,7 @@ Philosophie
 -   Ziel: Gensim versucht alle Operationen möglichst Resourcen schonend für den Rechner zu gestalten
 -   Große Datenstrukturen werden als stream verwaltet
 -   Aufwendige Transformationen werden komprimiert abgespeichert
--   vom der Datei bei Bedarf wieder gelesen
+-   von der Datei bei Bedarf wieder gelesen
 
 Gensim API
 ==========
@@ -136,7 +136,7 @@ Gensim.corpora einige Beispiele
     -   Dokumente als Wahrscheinlichkeitsverteilung der Topics
 -   `gensim.corpora.svmlightcorpus`
     -   Format basierend auf Konzepten für Support Vector Machines
-    -   jede Zeile ist ein Trainingsdatensatz gefolgt von feature:value Paaren
+    -   jede Zeile ist ein Trainingsdatensatz gefolgt von `feature:value` Paaren
 
 Modelle
 =======
@@ -184,7 +184,7 @@ Suchanfragen
     -   erlaubt großen Index
     -   wird in einzelne `shards` unterteilt für Speicher-Unabhängigkeit
 -   `SimilarityMatrix`
-    -   wird komplett in den Ram geladen
+    -   wird komplett in den RAM geladen
 
 Anwendung
 =========
@@ -254,6 +254,4 @@ Tips \#2
 Vielen Dank!
 ============
 
-![]
-
-  []: pseudo.jpg
+![]: pseudo.jpg
