@@ -55,20 +55,6 @@ def search_docs(corpus_path, query, num_results=10, model=models.TfidfModel):
     words, mapping = index_files(corpus_path)
 
     #TODO: lets gensim
-    tales_dict = corpora.Dictionary(words)
-    corpus = [tales_dict.doc2bow(text) for text in words]
-
-    tales_dict.save("resources/my_dict.dict")
-    tales_dict.save_as_text("resources/my_text_dict.dict")
-    save_all_corpi(corpus)
-
-    with open("resources/mycorpus.json", mode="w", encoding="utf-8") as file_stream:
-        json.dump(corpus, file_stream)
-
-    #corpus = MyCorpus("mycorpus.json")
-
-    my_model = model(corpus)
-    index = similarities.Similarity(my_model[corpus])
 
     logging.info("returning " + str(num_results))
     return retval[:num_results]
