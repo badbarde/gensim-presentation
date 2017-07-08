@@ -19,13 +19,6 @@ from mycorpus import MyCorpus
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s',
                     level=logging.INFO)
 
-def save_all_corpi(corpus, path="resources/mycorpus"):
-    """save corpus in many different formats
-    """
-    corpora.MmCorpus.serialize(path +".mm", corpus)
-    corpora.SvmLightCorpus.serialize(path +".svmlight", corpus)
-    corpora.LowCorpus.serialize(path +".low", corpus)
-
 def get_file_map(corpus_path):
     """creates a dictionary that assigns a numerical value to a document
     """
@@ -37,17 +30,14 @@ def get_texts(doc_map):
     ignorechars = """[:.,;!?"-()]_\\/»«<>$%&@€=+*~"#´`{}|\r\n\t“”‐"""
     for file in doc_map.values():
         with open(file, encoding="utf-8", mode="r") as doc:
-            mydoc = doc.read()
-            for char in ignorechars:
-                mydoc = mydoc.replace(char, "")
+            None
+            #TODO: dokumente bereinigen und returnen
         yield mydoc
 
 def get_stopwords(stop_word_file):
     """returns a set of stopwords from the given path
     """
-    with open(stop_word_file) as stop_js:
-        stopwords = set(json.load(stop_js))#important !1!!! SET
-    return stopwords
+    #TODO: Stopwords als set returnen
 
 def index_files(corpus_path):
     """indexes a corpus of files and returns a bag of words as a list
@@ -55,9 +45,7 @@ def index_files(corpus_path):
     doc_map = get_file_map(corpus_path)
     stopwords = get_stopwords("resources/stopwords.de.json")
 
-    bags_of_words = [[word for word in doc.lower().split()
-                      if word not in stopwords] for doc in get_texts(doc_map)]
-
+    #TODO: bag of words erstellen
     return (bags_of_words, doc_map)
 
 def search_docs(corpus_path, query, num_results=10, model=models.TfidfModel):
@@ -66,24 +54,8 @@ def search_docs(corpus_path, query, num_results=10, model=models.TfidfModel):
     logging.info("looking for " + ", ".join(query) + " in " + corpus_path)
     words, mapping = index_files(corpus_path)
 
-    tales_dict = corpora.Dictionary(words)
-    corpus = [tales_dict.doc2bow(text) for text in words]
+    #TODO: lets gensim
 
-    tales_dict.save("resources/my_dict.dict")
-    tales_dict.save_as_text("resources/my_text_dict.dict")
-    save_all_corpi(corpus)
-
-    with open("resources/mycorpus.json", mode="w", encoding="utf-8") as file_stream:
-        json.dump(corpus, file_stream)
-
-    #corpus = MyCorpus("mycorpus.json")
-
-    my_model = model(corpus)
-    index = similarities.MatrixSimilarity(my_model[corpus])
-
-    vec_query = my_model[tales_dict.doc2bow([q.lower() for q in query])]
-    sorted_result = sorted(enumerate(index[vec_query]), key=lambda i: -i[1])
-    retval = [mapping.get(i[0]) for i in sorted_result]
     logging.info("returning " + str(num_results))
     return retval[:num_results]
 
