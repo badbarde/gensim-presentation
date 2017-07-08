@@ -32,7 +32,7 @@ Gensim API
         help(gensim.corpora.Mmcorpus) # Klassenbeschreibung
         ...
 
-help(gensim)
+Help(gensim)
 ============
 
     DESCRIPTION 
@@ -49,7 +49,7 @@ help(gensim)
         summarization (package)
         ...
 
-getting started
+Getting started
 ===============
 
 -   Datei access
@@ -64,7 +64,7 @@ getting started
          ...
          [word_1, word_2, ..., word_x]] # last document
 
--   Gensim überlässt das Filemapping dem Programmierer
+-   Gensim überlässt das File mapping dem Programmierer
 
         filemapping = dict(enumerate(files))
         {i_1 : filename_1,
@@ -123,17 +123,20 @@ Corpus Fortgeschritten
                     for doc in json.load(file_stream):
                         yield my_dict.doc2bow(doc)
 
-gensim.corpora
+Gensim.corpora einige Beispiele
 ==============
 
 -   `gensim.corpora.csvcorpus`
-    -   todo
+    - selbsterklärend
 -   `gensim.corpora.mmcorpus`
-    -   todo
--   `gensim.corpora.hashdictionary`
-    -   todo
+    - sparse matrix Format
+    - jede nicht null Zelle wird mit Koordinaten abgespeichert
+-   `gensim.corpora.lowcorpus`
+    - GibbsLda++ Format: Latent Dirichlet allocation 
+    - Dokumente als Wahrscheinlichkeitsverteilung der Topics
 -   `gensim.corpora.svmlightcorpus`
-    -   todo
+    - Format basierend auf Konzepten für Support Vector Machines
+    - jede Zeile ist ein Trainingsdatensatz gefolgt von feature:value Paaren 
 
 Modelle
 =======
@@ -197,7 +200,7 @@ Tips \#1
         list = [elem1, elem2, .., elem_n]
         list[i] = elem_i
 
--   Touple (immutable)
+-   Tuple (immutable)
 
         touple = (elem1, elem2, ..., elem_n)
 

@@ -5,6 +5,7 @@ Created on Mon Apr 10 20:47:31 2017
 """
 import logging
 import sys
+import os
 import glob
 import re
 from functools import partial
@@ -16,6 +17,19 @@ from mycorpus import MyCorpus
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s',
                     level=logging.INFO)
+
+def save_all_corpi(corpus, path="resources/mycorpus"):
+    """save corpus in many different formats
+    """
+    corpora.MmCorpus.serialize(path +".mm", corpus)
+    corpora.SvmLightCorpus.serialize(path +".svmlight", corpus)
+    corpora.LowCorpus.serialize(path +".low", corpus)
+
+def save_all_dicts(dictionary, path="resources/mydict"):
+    """save dict in many formats
+    """
+    corpora.dictionary.save(dictionary, path + ".dict")
+    corpora.hashdictionary.save(dictionary, path + ".dict")
 
 def get_file_map(corpus_path):
     """creates a dictionary that assigns a numerical value to a document
@@ -30,7 +44,7 @@ def get_texts(doc_map):
         with open(file, encoding="utf-8", mode="r") as doc:
             yield ignorechars.sub('', doc.read())
 
-def get_stop_words(stop_word_file):
+def get_stopwords(stop_word_file):
     """returns a set of stopwords from the given path
     """
     with open(stop_word_file) as stop_js:
@@ -41,10 +55,10 @@ def index_files(corpus_path):
     """indexes a corpus of files and returns a bag of words as a list
     """
     doc_map = get_file_map(corpus_path)
-    stop_words = get_stop_words("stopwords.de.json")
+    stopwords = get_stopwords("resources/stopwords.de.json")
 
     bags_of_words = [[word for word in doc.lower().split()
-                      if word not in stop_words] for doc in get_texts(doc_map)]
+                      if word not in stopwords] for doc in get_texts(doc_map)]
 
     return (bags_of_words, doc_map)
 
@@ -57,7 +71,10 @@ def search_docs(corpus_path, query, num_results=10, model=models.TfidfModel):
     tales_dict = corpora.Dictionary(words)
     corpus = [tales_dict.doc2bow(text) for text in words]
 
-    with open("mycorpus.json", mode="w", encoding="utf-8") as file_stream:
+    save_all_dicts(tales_dict)
+    save_all_corpi(corpus)
+
+    with open("resources/mycorpus.json", mode="w", encoding="utf-8") as file_stream:
         json.dump(corpus, file_stream)
 
     #corpus = MyCorpus("mycorpus.json")
