@@ -79,7 +79,7 @@ def search_docs(corpus_path, query, num_results=10, model=models.TfidfModel):
     #corpus = MyCorpus("mycorpus.json")
 
     my_model = model(corpus)
-    index = similarities.MatrixSimilarity(my_model[corpus])
+    index = similarities.Similarity(my_model[corpus])
 
     vec_query = my_model[tales_dict.doc2bow([q.lower() for q in query])]
     sorted_result = sorted(enumerate(index[vec_query]), key=lambda i: -i[1])

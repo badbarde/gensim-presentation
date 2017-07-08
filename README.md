@@ -1,5 +1,5 @@
 # gensim-presentation
-Resources for my gensim presentation in infromation retrieval
+Resources for my gensim presentation in information retrieval
 
 Gensim
 ======
@@ -127,19 +127,19 @@ Corpus Fortgeschritten
                         yield my_dict.doc2bow(doc)
 
 Gensim.corpora einige Beispiele
-==============
+===============================
 
 -   `gensim.corpora.csvcorpus`
-    - selbsterklärend
+    -   selbsterklärend
 -   `gensim.corpora.mmcorpus`
-    - sparse matrix Format
-    - jede nicht null Zelle wird mit Koordinaten abgespeichert
+    -   sparse matrix Format
+    -   jede nicht null Zelle wird mit Koordinaten abgespeichert
 -   `gensim.corpora.lowcorpus`
-    - GibbsLda++ Format: Latent Dirichlet allocation 
-    - Dokumente als Wahrscheinlichkeitsverteilung der Topics
+    -   GibbsLda++ Format: Latent Dirichlet allocation
+    -   Dokumente als Wahrscheinlichkeitsverteilung der Topics
 -   `gensim.corpora.svmlightcorpus`
-    - Format basierend auf Konzepten für Support Vector Machines
-    - jede Zeile ist ein Trainingsdatensatz gefolgt von feature:value Paaren 
+    -   Format basierend auf Konzepten für Support Vector Machines
+    -   jede Zeile ist ein Trainingsdatensatz gefolgt von feature:value Paaren
 
 Modelle
 =======
@@ -170,7 +170,7 @@ Anwendung
 =========
 
 -   Modelle sind Wrapper um den Corpus
--   D.h. erst bei Anfrage wird das Modell *angewendet*
+-   Das heißt, dass erst bei Anfrage das Modell *angewendet* wird 
 
         tfidf_corpus = models.TfidfModel(corpus)
 
@@ -180,15 +180,32 @@ Suchanfragen
 ============
 
 -   `similarities`
+-   Berechnet die Cosinus Ähnlichkeit einer query zu einem Corpus
+-   Kann verschiedene `models` als Input bekommen
+-   Nicht Sinnvoll wenn Vektoren Wahrscheinlichkeitsverteilungen darstellen
+-   `Similarity`
+    -   erlaubt großen Index
+    -   wird in einzelne `shards` unterteilt für Speicher-Unabhängigkeit
+-   `SimilarityMatrix`
+    -   wird komplett in den Ram geladen
 
 Anwendung
 =========
 
         query_matrix = 
-            similarities.MatrixSimilarity(model[corpus])
+            similarities.Similarity(model[corpus])
         query = my_dict.doc2bow(["foo"])
         query_model = model[query]
         results = query_matrix[query_model]
+
+Distributed Computing
+=====================
+
+-   gensim lässt sich mit Pyro4 (python remote objects) auf ein Netzwerk aufteilen
+-   Es muss kein Code angepasst werden
+-   Man startet stattdessen Worker
+-   kommt mit wenig Netzwerk Kommunikation aus
+-   **Wichtig** Speedup kann allein schon durch Numpys Basic Linear Algebra library erreicht werden
 
 Tips \#1
 ========
@@ -220,13 +237,13 @@ Tips \#2
 ========
 
 -   String Funktionen
-    - split(delimiter=" ") returnt liste getrennt an delimiter
-    - lower() alles Kleinbuchstaben
+    -   split(delimiter=" ") returnt liste getrennt an delimiter
+    -   lower() alles Kleinbuchstaben
 -   Sonderzeichen filtern
 
-        import re
-        ignorechars = re.compile("[:.,;:!?\"-()]\n")
-        clean_string = ignorechars.sub('', string)
+        ignorechars = """[:.,;:!?"-()]\n"""
+        "bla!".replace("!", "")
+
 -   Sortieren
 
         sorted(iterable[, cmp[, key[, reverse]]])
@@ -239,4 +256,7 @@ Tips \#2
 
 Vielen Dank!
 ============
-![](pseudo.jpg)
+
+![]
+
+  []: pseudo.jpg

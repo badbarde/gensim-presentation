@@ -6,15 +6,15 @@ import search_docs as sd
 def test_get_file_map_len():
     """test for get_file_map length
     """
-    file_map = sd.get_file_map(".")
-    files = glob.glob("." + "/**" + ".txt", recursive=True)
+    file_map = sd.get_file_map("resources/")
+    files = glob.glob("resources/" + "/**" + ".txt", recursive=True)
     assert len(file_map) == len(files)
 
 
 def test_get_file_map_type():
     """test for get_file_map filetypes
     """
-    for file in sd.get_file_map("."):
+    for file in sd.get_file_map("resources/"):
         assert file.endswith(".txt")
 
 def test_get_texts_ignores():
@@ -31,7 +31,7 @@ def test_get_texts_ignores():
 def test_get_texts_size():
     """test for texts size
     """
-    file_map = sd.get_file_map(".")
+    file_map = sd.get_file_map("resources/")
     texts = [i for i in sd.get_texts(file_map)]
     assert len(file_map) == len(texts)
     for file, text in zip(file_map, texts):
@@ -42,5 +42,5 @@ def test_get_texts_size():
 def test_get_stopwords():
     """test get_stopwords if there are any loaded
     """
-    stopwords = sd.get_stopwords("stopwords.de.json")
+    stopwords = sd.get_stopwords("resources/stopwords.de.json")
     assert len(stopwords) > 0
