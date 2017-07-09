@@ -79,11 +79,11 @@ def search_docs(corpus_path, query, num_results=10, model=models.TfidfModel):
     #corpus = MyCorpus("mycorpus.json")
 
     my_model = model(corpus)
-    index = similarities.Similarity(my_model[corpus])
+    index = similarities.MatrixSimilarity(my_model[corpus])
 
     vec_query = my_model[tales_dict.doc2bow([q.lower() for q in query])]
     sorted_result = sorted(enumerate(index[vec_query]), key=lambda i: -i[1])
-    retval = [mapping.get(i[0]) for i in sorted_result]
+    retval = [(mapping.get(i[0]), i[1]) for i in sorted_result if i[1] > 0]
     logging.info("returning " + str(num_results))
     return retval[:num_results]
 
@@ -127,7 +127,7 @@ def handle_args(argv):
 
     res = search_docs(args.corpus, args.query, args.num_results, my_model)
     for r in res:
-        print(r)
+        print(str(r[1]) + "\t: " + r[0])
 
 if __name__ == "__main__":
     handle_args(sys.argv[1:])
