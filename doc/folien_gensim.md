@@ -1,4 +1,4 @@
-Gensim
+Gensim <!--Rene -->
 ======
 
 Topic modelling for humans
@@ -55,7 +55,7 @@ Getting started
 -   Datei access
 
         with open(filename, mode="r") as filestream:
-            doc = filestream.readlines()
+            doc = filestream.read()
 
 -   Input: *Bag of words*
 
@@ -95,7 +95,7 @@ Output
         |      gensim.utils.SaveLoad
         |      ...
 
-Corpus
+Corpus <!--Björn-->
 ======
 
 -   Der Corpus repräsentiert die Dokumente
@@ -195,7 +195,7 @@ Anwendung
         query_model = model[query]
         results = query_matrix[query_model]
 
-Distributed Computing
+Distributed Computing <!--Rene -->
 =====================
 
 -   gensim lässt sich mit Pyro4 (python remote objects) auf ein Netzwerk aufteilen
