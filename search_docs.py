@@ -47,6 +47,7 @@ def index_files(corpus_path):
     stopwords = get_stopwords("resources/stopwords.de.json")
 
     #TODO: bag of words erstellen
+
     return (bags_of_words, doc_map)
 
 def search_docs(corpus_path, query, num_results=10, model=models.TfidfModel):
@@ -55,32 +56,8 @@ def search_docs(corpus_path, query, num_results=10, model=models.TfidfModel):
     logging.info("looking for " + ", ".join(query) + " in " + corpus_path)
     words, mapping = index_files(corpus_path)
 
-<<<<<<< HEAD
-    tales_dict = corpora.Dictionary(words)
-    corpus = [tales_dict.doc2bow(text) for text in words]
-
-    tales_dict.save("resources/my_dict.dict")
-    tales_dict.save_as_text("resources/my_text_dict.dict")
-    save_all_corpi(corpus)
-
-    with open("resources/mycorpus.json", mode="w", encoding="utf-8") as file_stream:
-        json.dump(corpus, file_stream)
-
-    #corpus = MyCorpus("mycorpus.json")
-
-    #my_model = models.TfidfModel(corpus,
-    #                              wlocal=lambda x: (1 + np.log10(x)),
-    #                              wglobal=lambda x, y: (np.log(y / x)))
-    my_model = model(corpus)
-    index = similarities.MatrixSimilarity(my_model[corpus])
-
-    vec_query = my_model[tales_dict.doc2bow([q.lower() for q in query])]
-    sorted_result = sorted(enumerate(index[vec_query]), key=lambda i: -i[1])
-    retval = [(mapping.get(i[0]), i[1]) for i in sorted_result if i[1] > 0]
-=======
     #TODO: lets gensim
 
->>>>>>> skeleton
     logging.info("returning " + str(num_results))
     return retval[:num_results]
 
