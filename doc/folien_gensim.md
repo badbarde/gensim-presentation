@@ -1,4 +1,4 @@
-Gensim
+Gensim <!--Rene -->
 ======
 
 Topic modelling for humans
@@ -17,7 +17,7 @@ Philosophie
 -   Ziel: Gensim versucht alle Operationen möglichst resourcenschonend für den Rechner zu gestalten
 -   Große Datenstrukturen werden als Stream verwaltet
 -   Aufwendige Transformationen werden komprimiert abgespeichert
--   vom der Datei bei Bedarf wieder gelesen
+-   von der Datei bei Bedarf wieder gelesen
 
 Gensim API
 ==========
@@ -55,7 +55,7 @@ Getting started
 -   Datei access
 
         with open(filename, mode="r") as filestream:
-            doc = filestream.readlines()
+            doc = filestream.read()
 
 -   Input: *Bag of words*
 
@@ -95,7 +95,7 @@ Output
         |      gensim.utils.SaveLoad
         |      ...
 
-Corpus
+Corpus <!--Björn-->
 ======
 
 -   Der Corpus repräsentiert die Dokumente
@@ -109,7 +109,7 @@ Corpus
 
         corpus = [my_dict.doc2bow(words) for words in bag]
 
--   my\_dict bildet die Wörter des Bags auf Zahlen ab
+-   `my_dict` bildet die Wörter des Bags auf Zahlen ab
 
 Corpus Fortgeschritten
 ======================
@@ -136,7 +136,7 @@ Gensim.corpora einige Beispiele
     -   Dokumente als Wahrscheinlichkeitsverteilung der Topics
 -   `gensim.corpora.svmlightcorpus`
     -   Format basierend auf Konzepten für Support Vector Machines
-    -   jede Zeile ist ein Trainingsdatensatz gefolgt von feature:value Paaren
+    -   jede Zeile ist ein Trainingsdatensatz gefolgt von `feature:value` Paaren
 
 Modelle
 =======
@@ -213,7 +213,7 @@ Suchanfragen
     -   erlaubt großen Index
     -   wird in einzelne `shards` unterteilt für Speicher-Unabhängigkeit
 -   `SimilarityMatrix`
-    -   wird komplett in den Ram geladen
+    -   wird komplett in den RAM geladen
 
 Anwendung
 =========
@@ -224,7 +224,7 @@ Anwendung
         query_model = model[query]
         results = query_matrix[query_model]
 
-Distributed Computing
+Distributed Computing <!--Rene -->
 =====================
 
 -   gensim lässt sich mit Pyro4 (python remote objects) auf ein Netzwerk aufteilen
@@ -283,6 +283,4 @@ Tips \#2
 Vielen Dank!
 ============
 
-![]
-
-  []: pseudo.jpg
+![]: pseudo.jpg
