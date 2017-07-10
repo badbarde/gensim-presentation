@@ -1,8 +1,10 @@
-# gensim-presentation
+gensim-presentation
+===================
+
 Resources for my gensim presentation in information retrieval
 
-Gensim
-======
+Gensim <!--Rene -->
+===================
 
 Topic modelling for humans
 
@@ -10,17 +12,17 @@ Einleitung
 ==========
 
 -   Gensim ist eine Bibliothek für Python
-    -   semantische analyse von Texten
+    -   semantische Analyse von Texten
     -   suche nach Dokumenten mit semantischer Ähnlichkeit zur Anfrage
 
 Philosophie
 ===========
 
 -   Große Dokumenten Corpora sind ein Problem bezüglich ihrer Größe im Arbeitsspeicher
--   Ziel: Gensim versucht alle Operationen möglichst Resourcen schonend für den Rechner zu gestalten
--   Große Datenstrukturen werden als stream verwaltet
+-   Ziel: Gensim versucht alle Operationen möglichst resourcenschonend für den Rechner zu gestalten
+-   Große Datenstrukturen werden als Stream verwaltet
 -   Aufwendige Transformationen werden komprimiert abgespeichert
--   vom der Datei bei Bedarf wieder gelesen
+-   von der Datei bei Bedarf wieder gelesen
 
 Gensim API
 ==========
@@ -58,7 +60,7 @@ Getting started
 -   Datei access
 
         with open(filename, mode="r") as filestream:
-            doc = filestream.readlines()
+            doc = filestream.read()
 
 -   Input: *Bag of words*
 
@@ -98,8 +100,8 @@ Output
         |      gensim.utils.SaveLoad
         |      ...
 
-Corpus
-======
+Corpus <!--Björn-->
+===================
 
 -   Der Corpus repräsentiert die Dokumente
 -   Einfaches Beispiel mit *doc2bow*:
@@ -112,7 +114,7 @@ Corpus
 
         corpus = [my_dict.doc2bow(words) for words in bag]
 
--   my\_dict bildet die Wörter des Bags auf Zahlen ab
+-   `my_dict` bildet die Wörter des Bags auf Zahlen ab
 
 Corpus Fortgeschritten
 ======================
@@ -139,13 +141,17 @@ Gensim.corpora einige Beispiele
     -   Dokumente als Wahrscheinlichkeitsverteilung der Topics
 -   `gensim.corpora.svmlightcorpus`
     -   Format basierend auf Konzepten für Support Vector Machines
-    -   jede Zeile ist ein Trainingsdatensatz gefolgt von feature:value Paaren
+    -   jede Zeile ist ein Trainingsdatensatz gefolgt von `feature:value` Paaren
 
 Modelle
 =======
 
         help(gensim.models)
         help(gensim.models.tfidfmodel)
+        help(gensim.models.lsimodel)
+        help(gensim.models.ldamodel)
+        help(gensim.models.Word2Vec)
+        help(gensim.models.Doc2Vec)
 
 Output
 ======
@@ -166,11 +172,39 @@ Output
         |  
         |  Model persistency is achieved via its load/save methods.
 
+TFIDF
+=====
+
+-   Gensim: $w_{t,d} = tf(t, d) * log_2(\frac{N}{df(t)})$
+    -   $tf$ und $log_2$ sind in Gensim austauschbar
+-   Folien: $w_{t,d} = (1 + log_{10}(tf(t, d)) * log(\frac{N}{df(t)})$
+    -   Bonus Aufgabe: Wer schafft es die Version der tfidf aus der Vorlesung in Gensim einzubauen?
+
+Latent semantic Indexing
+========================
+
+-   akzeptiert *auch* einen durch tfidf gewichteten Corpus als Parameter
+-   erlaubt inkrementelles erweitern des Corpus um weitere Dokumente
+-   Unterstützt Corpora größer als RAM Beschränkungen es zulassen
+-   Streaming
+-   Distributed computing ohne große Anpassung des Codes
+
+Latent Dirichlet Allocation
+===========================
+
+-   Probabilistisches Modell
+-   kann inkrementell trainiert werden
+-   Cosinus Ähnlichkeit eher ungeeignet
+    -   besser: Hellinger Distanz
+    -   `gensim.mathutils.hellinger()`
+    -   Lässt sich nicht ohne weiteres in `Similarity` verwenden
+-   `sims = [(doc, hellinger(doc, query)) for doc in index]`
+
 Anwendung
 =========
 
 -   Modelle sind Wrapper um den Corpus
--   Das heißt, dass erst bei Anfrage das Modell *angewendet* wird 
+-   Das heißt, dass erst bei Anfrage das Modell *angewendet* wird
 
         tfidf_corpus = models.TfidfModel(corpus)
 
@@ -187,7 +221,7 @@ Suchanfragen
     -   erlaubt großen Index
     -   wird in einzelne `shards` unterteilt für Speicher-Unabhängigkeit
 -   `SimilarityMatrix`
-    -   wird komplett in den Ram geladen
+    -   wird komplett in den RAM geladen
 
 Anwendung
 =========
@@ -198,8 +232,8 @@ Anwendung
         query_model = model[query]
         results = query_matrix[query_model]
 
-Distributed Computing
-=====================
+Distributed Computing <!--Rene -->
+==================================
 
 -   gensim lässt sich mit Pyro4 (python remote objects) auf ein Netzwerk aufteilen
 -   Es muss kein Code angepasst werden
@@ -257,6 +291,4 @@ Tips \#2
 Vielen Dank!
 ============
 
-![]
-
-  []: pseudo.jpg
+\[\]: pseudo.jpg
