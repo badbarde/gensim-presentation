@@ -8,6 +8,7 @@ import sys
 import os
 import glob
 import re
+import numpy as np
 import argparse
 from functools import partial
 import json
@@ -78,6 +79,9 @@ def search_docs(corpus_path, query, num_results=10, model=models.TfidfModel):
 
     #corpus = MyCorpus("mycorpus.json")
 
+    #my_model = models.TfidfModel(corpus,
+    #                              wlocal=lambda x: (1 + np.log10(x)),
+    #                              wglobal=lambda x, y: (np.log(y / x)))
     my_model = model(corpus)
     index = similarities.MatrixSimilarity(my_model[corpus])
 

@@ -7,15 +7,15 @@ Einleitung
 ==========
 
 -   Gensim ist eine Bibliothek für Python
-    -   semantische analyse von Texten
+    -   semantische Analyse von Texten
     -   suche nach Dokumenten mit semantischer Ähnlichkeit zur Anfrage
 
 Philosophie
 ===========
 
 -   Große Dokumenten Corpora sind ein Problem bezüglich ihrer Größe im Arbeitsspeicher
--   Ziel: Gensim versucht alle Operationen möglichst Resourcen schonend für den Rechner zu gestalten
--   Große Datenstrukturen werden als stream verwaltet
+-   Ziel: Gensim versucht alle Operationen möglichst resourcenschonend für den Rechner zu gestalten
+-   Große Datenstrukturen werden als Stream verwaltet
 -   Aufwendige Transformationen werden komprimiert abgespeichert
 -   vom der Datei bei Bedarf wieder gelesen
 
@@ -143,6 +143,10 @@ Modelle
 
         help(gensim.models)
         help(gensim.models.tfidfmodel)
+        help(gensim.models.lsimodel)
+        help(gensim.models.ldamodel)
+        help(gensim.models.Word2Vec)
+        help(gensim.models.Doc2Vec)
 
 Output
 ======
@@ -162,6 +166,31 @@ Output
         |  >>> tfidf.save('/tmp/foo.tfidf_model')
         |  
         |  Model persistency is achieved via its load/save methods.
+
+# TFIDF 
+
+- Gensim: $w_{t,d} = tf(t, d) * log_2(\frac{N}{df(t)})$
+    - $tf$ und $log_2$ sind in Gensim austauschbar
+- Folien: $w_{t,d} = (1 + log_{10}(tf(t, d)) * log(\frac{N}{df(t)})$
+    - Bonus Aufgabe: Wer schafft es die Version der tfidf aus der Vorlesung in Gensim einzubauen?
+
+# Latent semantic Indexing
+
+ - akzeptiert *auch* einen durch tfidf gewichteten Corpus als Parameter
+ - erlaubt inkrementelles erweitern des Corpus um weitere Dokumente
+ - Unterstützt Corpora größer als RAM Beschränkungen es zulassen
+ - Streaming
+ - Distributed computing ohne große Anpassung des Codes
+
+# Latent Dirichlet Allocation
+
+ - Probabilistisches Modell
+ - kann inkrementell trainiert werden
+ - Cosinus Ähnlichkeit eher ungeeignet
+    - besser: Hellinger Distanz
+    - `gensim.mathutils.hellinger()`
+    - Lässt sich nicht ohne weiteres in `Similarity` verwenden
+ - `sims = [(doc, hellinger(doc, query)) for doc in index]`
 
 Anwendung
 =========
